@@ -26,7 +26,7 @@ The data contains 296 observations. The columns are as described below:
   * 1: normal
   * 2: abnormalities in the T wave or ST segment
 * thalach - Maxium heart rate during the stress test;
-* exang - If patient had angina during exercise:
+* exang - If patient had angina (chest pain) during exercise:
   * 0 -> no
   * 1 -> yes
 * oldpeak - Decrease of the ST segment during exercise according to the same one on rest;
@@ -344,8 +344,37 @@ Both examples above, I used the Normal Model. The predicted value can be found b
 From your dataset, specify your input and output variables, then:
 
 ### a) Suggest an appropriate GLM to model ouput to input variables.
+
+For this dataset, we want to know if the person is likely or not to have a heart condition. This means that there are 2 options for the output variable, 0 -> yes and 1 -> no. For a binary output, we will use Binomial
+
 ### b) Split the dataset into 80% as a trainset and 20% testset, then model the trainset by fitting your proposed GLM.
+```{r}
+library(caTools)
+split = sample.split(df, SplitRatio=.8)
+
+# training dataset
+trainset = subset(df, split==T)
+# test dataset
+testset = subset(df, split==F)
+
+dim(testset)
+dim(trainset)
+
+trainset.glm = glm( target ~ sex+cp+trestbps+chol+fbs+restecg+thalach+exang+oldpeak+slope+ca+thal, trainset, family="binomial") # ~. shows that we include all ind. variables
+summary(trainset.glm) # both variable are sig.
+```
 ### c) Specify the significant variables on the output variable at the level of 𝛼=0.05 and explore the related hypotheses test. Estimate the parameters of your model.
+
+After testing all columns, I can now select the ones that have a high correlation in predicting a heart condition, where alpha <= 0.05:
+
+* sex;
+* cp (chest pain);
+* thalach (Maxium heart rate during the stress test)
+* exang (If patient had angina (chest pain) during exercise)
+* slope (Slope of the ST segment during the most demanding part of the exercise)
+* ca (Number of main blood vessels that are narrow, coloured by the radioactive dye)
+* thal (Results of the blood flow observed via the radioactive dye)
+
 ### d)Predict the output of the test dataset using the trained model. And provide the functional form of the optimal predictive model.
 ### e) Propose the appropriate measure of performance to evaluate the model and compute it for your derived model.
 
