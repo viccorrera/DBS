@@ -19,37 +19,65 @@ def generate_payslip(series):
     file_name = '{}-{} {}.txt'.format(date, s['First Name'], s['Surname'])
     with open(file_name, 'w') as f:
         f.write('PAYSLIP\n\n')
-        f.write('StaffID: {}\n'.format(s['StaffID']))
-        f.write('Staff Name: {} {}\n'.format(s['First Name'], s['Surname']))
-        f.write('PPSN: {}\n'.format(s['PPS Number']))
-        f.write('Date: {}\n'.format(date))
-        f.write('\t\tHours\t\tRate\t\tTotal\n')
-        f.write('Regular\t\t{}\t\t{:,.2f}\t\t{}\n'.format(
+        f.write('{:12}{}\n'.format('StaffID: ', s['StaffID']))
+        f.write('{:12}{} {}\n'.format(
+            'Staff Name: ',
+            s['First Name'],
+            s['Surname']
+        ))
+        f.write('{:12}{}\n'.format('PPSN: ', s['PPS Number']))
+        f.write('{:12}{}\n\n'.format('Date: ', date))
+        f.write('{:18} | {:^8} | {:^8} | {:^8}\n'.format(
+            '',
+            'Hours',
+            'Rate',
+            'Total'
+        ))
+        f.write('{:18} | {:8,.2f} | {:8,.2f} | {:8,.2f}\n'.format(
+            'Regular',
             s['Regular'],
             s['Hourly Rate'],
             s['Regular Pay']
         ))
-        f.write('Overtime\t{:,.2f}\t\t{:,.2f}\t\t{}\n\n'.format(
+        f.write('{:18} | {:8,.2f} | {:8,.2f} | {:8,.2f}\n\n'.format(
+            'Overtime',
             s['Overtime'],
             s['Overtime Rate'],
             s['Overtime Pay']
         ))
-        f.write('Gross Pay\t{}\n\n'.format(s['Gross Pay']))
-        f.write('\t\t\t\t\tRate\t\tTotal\n')
-        f.write('Standard Band\t\t{:,.2f}\t\t{:.0%}\t\t{:,.2f}\n'.format(
+        f.write('{:18} {:8,.2f}\n\n'.format('Gross Pay', s['Gross Pay']))
+        f.write('{:18}   {:^8} | {:^8} | {:^8}\n'.format(
+            '',
+            '',
+            'Rate',
+            'Total'
+        ))
+        f.write('{:18} | {:8,.2f} | {:8.0%} | {:8,.2f}\n'.format(
+            'Standard Band',
             s['StandardBand'],
             s['StandardRate'],
             s['Regular Tax']
         ))
-        f.write('Higher Rate\t\t{:,.2f}\t\t{:.0%}\t\t{:,.2f}\n\n'.format(
+        f.write('{:18} | {:8,.2f} | {:8.0%} | {:8,.2f}\n\n'.format(
+            'Higher Rate',
             s['Higher Rate Pay'],
             s['HigherRate'],
             s['HigherRate Tax']
         ))
-        f.write('Total Deductions\t{:,.2f}\n'.format(s['Total Deductions']))
-        f.write('Tax Credit\t\t\t\t{:,.2f}\n'.format(s['TaxCredit']))
-        f.write('Net Deductions\t\t{:,.2f}\n'.format(s['Net Deductions']))
-        f.write('Net Pay\t\t\t{:,.2f}\n'.format(s['Net Pay']))
+        f.write('{:18} | {:8,.2f} |\n'.format(
+            'Total Deductions',
+            s['Total Deductions']
+        ))
+        f.write('{:18} | {:8} | {:8,.2f}\n'.format(
+            'Tax Credit',
+            '',
+            s['TaxCredit']
+        ))
+        f.write('{:18} | {:8,.2f} |\n'.format(
+            'Net Deductions',
+            s['Net Deductions']
+        ))
+        f.write('{:18}   {:8,.2f}'.format('Net Pay', s['Net Pay']))
     print('{} created.'.format(file_name))
 
 # import Hours.txt
