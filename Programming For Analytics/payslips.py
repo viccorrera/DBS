@@ -15,7 +15,7 @@ def generate_payslip(series):
     s = series
     # Avoid "/" to create multiple txt files based on date and Full Name 
     date = s['Date'].strftime('%d-%m-%Y')
-
+    # File name using date, First and Last name, to make it unique
     file_name = '{}-{} {}.txt'.format(date, s['First Name'], s['Surname'])
     with open(file_name, 'w') as f:
         f.write('PAYSLIP\n\n')
@@ -144,3 +144,4 @@ hrs['Net Deductions'] = hrs['Total Deductions'] - hrs['TaxCredit']
 hrs['Net Pay'] = hrs['Gross Pay'] - hrs['Net Deductions']
 
 hrs.apply(generate_payslip, axis=1)
+
