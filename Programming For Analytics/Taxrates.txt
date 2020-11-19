@@ -1,0 +1,2 @@
+Standard Rate	Higher Rate
+20	40
