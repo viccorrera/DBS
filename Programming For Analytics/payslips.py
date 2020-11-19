@@ -15,7 +15,7 @@ def generate_payslip(series):
     s = series
     # Avoid "/" to create multiple txt files based on date and Full Name 
     date = s['Date'].strftime('%d-%m-%Y')
-    # File name using date, First and Last name, to make it unique
+
     file_name = '{}-{} {}.txt'.format(date, s['First Name'], s['Surname'])
     with open(file_name, 'w') as f:
         f.write('PAYSLIP\n\n')
@@ -145,3 +145,50 @@ hrs['Net Pay'] = hrs['Gross Pay'] - hrs['Net Deductions']
 
 hrs.apply(generate_payslip, axis=1)
 
+# QUESTION 2
+
+def pay_report(dataframe, n=6):
+    """Generates a pay report with weekly average gross pay,
+    and n-week rolling average gross pay.
+
+    Parameters
+    ----------
+    dataframe : Pandas.DataFrame
+        this is the DataFrame that contains all the payslips
+    n : integer
+        number of weeks to apply the rolling average
+    """
+    # Filter DF because we only need 3 columns for report
+    df = dataframe[['Date', 'StaffID', 'Gross Pay']]
+    
+    # Reset Index to avoid Multilevel indexing
+    pay_average = df.groupby('StaffID').mean().reset_index()
+    
+    # Renaming to better present information
+    pay_average.rename(columns={'Gross Pay': 'Average Gross Pay'}, inplace=True)
+    
+    # Create empty df to store rolling average values 
+    # to then merge with main df
+    rolling_av_df = pd.DataFrame(columns=['StaffID', 'Gross Pay'])
+    for i in df['StaffID'].unique():
+        filtered_df = hrs[['StaffID', 'Gross Pay']].loc[hrs['StaffID'] == i]
+        # if pay dates less than n, then no value will appear.
+        if len(filtered_df) >= n:
+            # Because of rolling average, we can take only the last n rows.
+            rolling_average = filtered_df.tail(n).groupby(
+                'StaffID'
+            ).mean().reset_index()
+            
+            # append to df
+            rolling_av_df = pd.concat([rolling_av_df, rolling_average])
+
+    df_report = pay_average.merge(rolling_av_df, on='StaffID', how='left')
+    
+    df_report.rename(columns={
+        'Gross Pay':'Rolling Average Pay ({} wks)'.format(n)
+    }, inplace=True)
+
+    df_report.to_csv('Pay Report.txt', sep='\t', index=False, header=True)
+    return df_report
+            
+pay_report(hrs)
