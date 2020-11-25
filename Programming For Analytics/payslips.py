@@ -126,14 +126,14 @@ hrs['Higher Rate Pay'] = hrs.apply(
 
 hrs['Regular Tax'] = hrs.apply(
     lambda x: x['Gross Pay'] * x['StandardRate'] if
-              x['Gross Pay'] <= 700 
+              x['Gross Pay'] <= x['StandardBand']
               else x['StandardBand'] * x['StandardRate'],
     axis=1
 )
 
 hrs['HigherRate Tax'] = hrs.apply(
     lambda x: (x['Gross Pay'] - x['StandardBand']) * x['HigherRate'] if
-              x['Gross Pay'] > 700 
+              x['Gross Pay'] > x['StandardBand']
               else 0,
     axis=1
 )
