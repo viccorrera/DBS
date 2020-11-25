@@ -141,6 +141,7 @@ hrs['HigherRate Tax'] = hrs.apply(
 hrs['Total Deductions'] = hrs['Regular Tax'] + hrs['HigherRate Tax']
 
 hrs['Net Deductions'] = hrs['Total Deductions'] - hrs['TaxCredit']
+hrs.loc[hrs['Net Deductions'] < 0, 'Net Deductions'] = 0
 hrs['Net Pay'] = hrs['Gross Pay'] - hrs['Net Deductions']
 
 hrs.apply(generate_payslip, axis=1)
